@@ -1,0 +1,59 @@
+:root {
+    --primary-color: #1e90ff; /* Azul por defecto */
+    --secondary-color: #ffd700; /* Dorado */
+    --background-color: #f8f9fa; /* Fondo claro */
+    --text-color: #6D7364; /* Texto oscuro */
+    --header-footer-background: #FAFBF9; /* Fondo del header */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Arial', sans-serif;
+    color: var(--text-color) !important;
+}
+
+header {
+    background-color: var(--header-footer-background) !important;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: var(--header-footer-background) !important; 
+}
+footer a {
+    color: var(--text-color) !important;
+}
+footer a img {
+    max-height: 35px;
+}
+
+.nav-link {
+    color: var(--text-color) !important;
+}
+
+.nav-link.active {
+    font-weight: bold; 
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.nav-link img{
+    max-height: 35px;
+}
+
+.logo img{
+    max-height: 20px;
+}
+
+.search{
+    color: var(--text-color) !important;
+    border-color: var(--text-color) !important;
+}
+
+.search:hover{
+    background-color: var(--secondary-color) !important;  
+}
+
+.form-control{
+    color: var(--text-color) !important;
+}
