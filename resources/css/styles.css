@@ -1,9 +1,11 @@
 :root {
-    --primary-color: #1e90ff; /* Azul por defecto */
+    --background-precio:rgba(234, 246, 213, 0.7);/* fondo buton precio */
+    --color-secundary: #8C9D6F;
+    --price-color: #424837;
     --secondary-color: #ffd700; /* Dorado */
     --background-color: #f8f9fa; /* Fondo claro */
     --text-color: #6D7364; /* Texto oscuro */
-    --header-footer-background: #FAFBF9; /* Fondo del header */
+    --header-footer-background: #FAFBF9; /* Fondo del header/footer */
 }
 
 body {
@@ -28,13 +30,17 @@ footer a img {
     max-height: 35px;
 }
 
-.nav-link {
+.navbar .nav-link {
     color: var(--text-color) !important;
 }
 
 .nav-link.active {
     font-weight: bold; 
     border-bottom: 2px solid var(--secondary-color);
+}
+
+.nav-link:hover{
+    color: var(--secondary-color) !important;
 }
 
 .nav-link img{
@@ -51,9 +57,29 @@ footer a img {
 }
 
 .search:hover{
-    background-color: var(--secondary-color) !important;  
+    color: var(--secondary-color) !important;  
 }
 
 .form-control{
+    color: var(--text-color) !important;
+}
+
+.btn-transparent {
+    background-color: var(--background-precio) !important;
+    color: var(--text-color) !important;
+    border: none !important;
+}
+
+.btn-transparent:hover {
+    color: var(--secondary-color) !important; /* dorado*/
+    transform: scale(1.05); /* Efecto de agrandamiento */
+}
+
+.text-color{
+    border-color: var(--text-color) !important;
+    color: var(--text-color) !important;
+}
+
+h1, h2, h3{
     color: var(--text-color) !important;
 }
