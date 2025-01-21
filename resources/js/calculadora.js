@@ -1,11 +1,26 @@
 export function calculadora() {
     return {
-        tasa: 77, // Valor por defecto de la tasa
-        oficial: 53.8, // Valor fijo del dólar oficial
+        tasa: 79, // Valor por defecto de la tasa
+        oficial: 0, // Valor fijo del dólar oficial
         dolares: 0, // Valor inicial de dólares
         bss: 0, // Valor inicial de bolívares
         cop: 0, // Valor inicial de pesos colombianos
 
+        async getDolar(){
+            try {
+                let response = await fetch("https://pydolarve.org/api/v1/dollar?page=bcv&monitor=usd");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                let data = await response.json();
+                this.oficial= data.price
+            } catch (error) {
+                console.error("Error fetching the dollar rate:", error);
+            }
+        },
+        init(){
+            this.getDolar()
+        },
         convertir(origen) {
             const tasaDolar = this.oficial; // Usar siempre el dólar oficial
 

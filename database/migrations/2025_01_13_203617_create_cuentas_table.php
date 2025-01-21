@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('numero_documento');
             $table->string('numero_cuenta');
             $table->string('pago_movil');
+            $table->string('numero_whatsapp');
             $table->timestamps();
         });
     }

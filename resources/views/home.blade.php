@@ -10,7 +10,7 @@
             <div class="d-flex flex-wrap justify-content-center text-color h-100 w-100 rounded">
                 <div class="card text-color m-2">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <img src="{{ asset('images/logos/logoCalculadora.svg') }}" alt="logo text-color alculadora" style="height: 40px;">
+                        <img src="{{ asset('images/logos/logoCalculadora.svg') }}" alt="logo text-color" style="height: 40px;">
                         <h3 class="m-4">CALCULADORA</h3>
                     </div>
                     <div class="card-body" x-data="calculadora()">

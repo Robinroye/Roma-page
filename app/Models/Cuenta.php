@@ -15,5 +15,6 @@ class Cuenta extends Model
         'numero_documento',
         'numero_cuenta',
         'pago_movil',
+        'numero_whatsapp',
     ];
 }
