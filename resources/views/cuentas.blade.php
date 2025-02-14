@@ -17,9 +17,14 @@
             <x-input-search />
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm p-4 text-color" x-data="cuentasData({{ $cuentas->toJson() }})">
+            <div class="card border-0 shadow-sm p-4" x-data="cuentasData({{ $cuentas->toJson() }})">
                 <div class="mb-3">
-                    
+                    <!-- Mensaje del número asociado -->
+                    @if(isset($numeroWhatsapp))
+                    <div class="alert text-color">
+                        <h3>Cuentas asociadas al número: {{ $numeroWhatsapp }}</h3>
+                    </div>
+                    @endif
                     <!-- Botones Agregar y Editar -->
                     <div class="d-flex justify-content-between mb-2">
                         <!-- Botón Agregar -->
@@ -34,21 +39,16 @@
                         </button>
 
                     </div>
-                    <label for="cuentas" class="form-label">Seleccione una cuenta para realizar la transferencia:</label>
-                    <select id="cuentas" name="cuentas" class="form-select" x-model="selectedCuentaId" x-on:change="actualizarDetalles">
+                    <label for="cuentas" class="form-label text-color">Seleccione una cuenta para realizar la transferencia:</label>
+                    <select id="cuentas" name="cuentas" class="form-select text-color" x-model="selectedCuentaId" x-on:change="actualizarDetalles">
                         <template x-for="cuenta in cuentas" :key="cuenta.id">
                             <option :value="cuenta.id" x-text="`${cuenta.nombre_titular} / ${cuenta.numero_cuenta}`"></option>
                         </template>
                     </select>
                 </div>
-                <!-- Mensaje del número asociado -->
-                @if(isset($numeroWhatsapp))
-                <div class="alert alert-info">
-                    <h3>Cuentas asociadas al número: {{ $numeroWhatsapp }}</h3>
-                </div>
-                @endif
+
                 <!-- Detalles de la cuenta seleccionada -->
-                <div x-show="selectedCuenta">
+                <div class="text-color" x-show="selectedCuenta">
                     <p><strong>Nombre Titular:</strong> <span x-text="selectedCuenta.nombre_titular"></span></p>
                     <p><strong>Tipo de Documento:</strong> <span x-text="selectedCuenta.tipo_documento"></span></p>
                     <p><strong>Número de Documento:</strong> <span x-text="selectedCuenta.numero_documento"></span></p>
@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Campo para ingresar monto y usar calculadora -->
-                <div class="mt-2" x-data="calculadora()">
+                <div class="mt-2 text-color" x-data="calculadora()">
                     <label for="monto" class="form-label">Monto a enviar:</label>
                     <div class="d-flex flex-column">
                         <label for="dolares">USD/ Dólar Americano</label>
@@ -70,10 +70,25 @@
                         <input id="cop" type="number" class="form-control calculadora" x-model.number="cop" x-on:input="convertir('cop')">
                     </div>
                 </div>
-
                 <div class="text-end mt-4">
-                    <button type="button" class="btn btn-transparent">ENVIAR</button>
+                    <button class="btn btn-transparent" @click="addToCart('giro', {
+    id: Date.now(), // ID único
+    nombre_titular: selectedCuenta.nombre_titular,
+    tipo_documento: selectedCuenta.tipo_documento,
+    numero_documento: selectedCuenta.numero_documento,
+    numero_cuenta: selectedCuenta.numero_cuenta,
+    pago_movil: selectedCuenta.pago_movil,
+    monto_bss: bss.value || 0,
+    monto_dolares: dolares.value || 0,
+    monto_cop: cop.value || 0,
+    precio: cop.value || 0,
+    cantidad: 1
+})">
+                        <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito" width="20"> Agregar al carrito
+                    </button>
+
                 </div>
+
             </div>
         </div>
     </div>

@@ -44,11 +44,12 @@
                         </div>
                     </div>
                     <div class="card-footer text-start">
-                        <p>Estos datos son valores aproximados.</p>
+                        <p>Calculos con referencia al dolar oficial de Venezuela.</p>
                     </div>
                 </div>
-
-                <button class="btn position-absolute bottom-0 end-0 m-3 btn-transparent">Ver más</button>
+                <a href="{{ route('giros') }}" class="btn position-absolute bottom-0 end-0 m-3 btn-transparent">
+                    Ver más
+                </a>
             </div>
         </div>
 

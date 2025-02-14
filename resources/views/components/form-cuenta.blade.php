@@ -72,9 +72,9 @@
 
     <!-- Botones -->
     <div class="d-flex justify-content-between">
-        <button type="submit" class="btn btn-primary">{{ $submitText }}</button>
+        <button type="submit" class="btn btn-transparent">{{ $submitText }}</button>
         @if($cancelRoute)
-            <a href="{{ $cancelRoute }}" class="btn btn-secondary">Cancelar</a>
+            <a href="{{ $cancelRoute }}" class="btn btn-transparent">Cancelar</a>
         @endif
     </div>
 </form>

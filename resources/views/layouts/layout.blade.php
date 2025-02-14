@@ -11,11 +11,12 @@
     @stack('styles')
 </head>
 
-<body class="d-flex flex-column vh-100">
+<body class="d-flex flex-column vh-100" x-data="carritoGlobal">
     <!-- Header -->
     @include('partials.header')
 
     <!-- Main Content -->
+    @vite(['resources/js/app.js'])
     <main class="flex-grow-1">
         @yield('content')
     </main>
@@ -23,7 +24,6 @@
     
     @include('partials.footer')
     <!-- Scripts -->
-    @vite(['resources/js/app.js'])
     @stack('scripts')
 </body>
 

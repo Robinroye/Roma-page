@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\CuentaController;
+use App\Http\Controllers\VariedadesController;
+use App\Http\Controllers\ImpresionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -18,6 +20,8 @@ Route::post('/verificar-numero', [CuentaController::class, 'verificarNumero'])->
 Route::get('/cuentas/agregar', [CuentaController::class, 'agregarCuenta'])->name('agregar-cuenta');
 Route::post('/cuentas/agregar', [CuentaController::class, 'guardarNuevaCuenta'])->name('guardar-nueva-cuenta');
 Route::get('/cuentas/editar/{id}', [CuentaController::class, 'editarCuenta'])->name('editar-cuenta');
-/* Route::put('/cuentas/editar/{id}', [CuentaController::class, 'actualizarCuenta'])->name('actualizar-cuenta');
- */
 Route::put('/cuentas/editar/{id}', [CuentaController::class, 'guardarCuenta'])->name('actualizar-cuenta');
+Route::get('/variedades', [VariedadesController::class, 'index'])->name('variedades');
+Route::get('/producto/{id}', [VariedadesController::class, 'show'])->name('detalle.producto');
+Route::get('/variedades/producto/{id}', [VariedadesController::class, 'show'])->name('variedades.show');
+Route::post('/calcular-precio', [ImpresionController::class, 'calcularPrecio']);

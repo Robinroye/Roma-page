@@ -80,6 +80,25 @@ footer a img {
     color: var(--text-color) !important;
 }
 
-h1, h2, h3{
+h1,h2,h3,h4,h5,h6 {
     color: var(--text-color) !important;
+}
+
+.carrito {
+    position: relative;
+    padding-right: 11px;
+    & b{
+        position: absolute;
+        right: 0;
+        bottom: -7px;
+        background: red;
+        border-radius: 8.5px;
+        height: 17px;
+        font-size: 12px;
+        min-width: 17px;
+        display: grid;
+        place-content: center;
+        color: white;
+        padding: 0 0.4em;
+    }
 }

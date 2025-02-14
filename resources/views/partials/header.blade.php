@@ -41,10 +41,11 @@
                         <img src="{{ asset('images/icons/help.svg') }}" alt="Ayuda">
                     </a>
                 </li>
-                <li class="nav-item list-unstyled">
+                <li class="nav-item carrito list-unstyled">
                     <a class="nav-link" href="{{ route('carrito') }}">
                         <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito">
                     </a>
+                    <b class="items" x-show="itemCount" x-effect="itemCount = itemCount" x-text="itemCount"></b>
                 </li>
             </div>
         </div>
