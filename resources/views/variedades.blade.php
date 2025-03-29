@@ -7,49 +7,45 @@
     <div class="container-fluid">
         <div class="row">
             @foreach ($productos as $producto)
-            <div class="col-md-3 mb-3" id="item-{{ $producto['id'] }}">
+            <div class="col-md-3 mb-3" id="item-{{ $producto->id }}">
                 <div class="card h-100">
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
-                        <!-- Carrusel dinámico -->
-                        <div id="carousel-{{ $producto['id'] }}" class="carousel slide">
+                        <div id="carousel-{{ $producto->id }}" class="carousel slide">
                             <div class="carousel-inner">
-                                @foreach ($producto['imagenes'] as $index => $imagen)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <img src="{{ $imagen }}" class="d-block w-100" alt="Imagen {{ $index + 1 }} de {{ $producto['nombre'] }}">
-                                </div>
+                                @foreach (json_decode($producto->imagenes ?? '[]') as $imagen)
+                                <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del producto">
                                 @endforeach
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $producto['id'] }}" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Anterior</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $producto['id'] }}" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Siguiente</span>
                             </button>
                             <button class="btn btn-sm btn-transparent position-absolute bottom-0 end-0 m-2 z-2"
                                 data-bs-toggle="modal"
                                 data-bs-target="#detalleProductoModal"
-                                @click="cargarDetalle({{ $producto['id'] }})">
+                                @click="cargarDetalle({{ $producto->id }})">
                                 Ver más
                             </button>
                         </div>
                     </div>
                     <div class="card-footer text-color">
-                        <h5 class="card-title">{{ $producto['nombre'] }}</h5>
-                        <p class="card-text">Precio: ${{ number_format($producto['precio'], 0, ',', '.') }}</p>
+                        <h5 class="card-title">{{ $producto->nombre }}</h5>
+                        <p class="card-text">Precio: ${{ number_format($producto->precio, 0, ',', '.') }}</p>
                         <div class="d-flex justify-content-between">
                             <input type="number" autocomplete="off" class="form-control form-control-sm w-50" placeholder="Cantidad">
                             <a @click="addToCart('variedad', {
-    id: {{ $producto['id'] }},
-    nombre: '{{ $producto['nombre'] }}',
-    precio: '{{ $producto['precio'] }}',
-    imagen: '{{ $producto['imagenes'][0] }}',
+    id: {{ $producto->id }},
+    nombre: '{{ $producto->nombre }}',
+    precio: '{{ $producto->precio }}',
+    imagen: '{{ json_decode($producto->imagenes)[0] }}',
     cantidad: $el.parentElement.querySelector('input').value || 1
 })">
                                 <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito" width="20">
                             </a>
-
                         </div>
                     </div>
                 </div>

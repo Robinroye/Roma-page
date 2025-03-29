@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('cuentas', function (Blueprint $table) {
-            $table->string('numero_whatsapp', 20)->change(); // Agrega el campo
+        Schema::create('images', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('cuentas', function (Blueprint $table) {
-            $table->dropColumn('numero_whatsapp'); // Revierte el cambio
-        });
+        Schema::dropIfExists('images');
     }
 };

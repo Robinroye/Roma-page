@@ -1,6 +1,6 @@
 export function calculadora() {
     return {
-        tasa: 68, // Valor por defecto de la tasa
+        tasa: 52, // Valor por defecto de la tasa
         oficial: 0, // Valor fijo del dólar oficial
         dolares: 0, // Valor inicial de dólares
         bss: 0, // Valor inicial de bolívares

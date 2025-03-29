@@ -33,20 +33,21 @@
             <div class="card p-2 text-color">
                 <h5>Resumen del Pedido</h5>
                 <p class="mb-2"><strong>Cantidad de Impresiones:</strong> <span x-text="cantidad"></span></p>
-                <p class="mb-2"><strong>Envío nacional:</strong> $<span x-text="envio"></span></p>
-                <p class="mb-2"><strong>Costo Total:</strong> $<span x-text="total"></span></p>
+                <p class="mb-2"><strong>Costo por Copia:</strong> $<span x-text="total"></span></p>
                 <button class="btn btn-transparent" @click="addToCart('impresion', {
     id: Date.now(), // ID único basado en timestamp
     impresion_papel: papel,
     impresion_color: color,
     impresion_caras: caras,
-    impresion_cantidad: cantidad || 1, 
     impresion_indicaciones: indicaciones,
     impresion_archivos: archivos,
+    impresion_paginas_totales: paginasTotales,
+    impresion_paginas: paginas,
+    impresion_paginas_a_imprimir: paginasAImprimir,
     precio: total,
     impresion_whatsapp: whatsapp,
     impresion_direccion: direccion,
-    cantidad: 1
+    cantidad: cantidad || 1
     })">
                     <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito" width="20"> Agregar al carrito
                 </button>
@@ -79,18 +80,30 @@
                     <!-- Carrusel de imágenes si hay archivos cargados -->
                     <template x-if="vistasPrevias.length > 0">
                         <div class="carousel">
-
                             <div class="preview-container mb-2">
-                                <template x-for="(vista, i) in vistasPrevias" :key="i">
-                                    <div x-show="i === indice">
-                                        <img x-show="vista" :src="vista" class="img-fluid mt-2 rounded" alt="Vista previa">
-                                        <p x-show="!vista" x-text="archivos[i].name"></p>
-                                    </div>
-                                </template>
-                            </div>
-                            <button @click="indice = (indice - 1 + vistasPrevias.length) % vistasPrevias.length" class="btn btn-transparent">&lt;</button>
+                            <template x-for="(vista, i) in vistasPrevias" :key="i">
+                                <div x-show="i === indice">
+                                    <!-- IMAGE PREVIEW -->
+                                    <img x-show="vista.type === 'img'" :src="vista.src" class="img-fluid mt-2 rounded" alt="Vista previa">
 
-                            <button @click="indice = (indice + 1) % vistasPrevias.length" class="btn btn-transparent">&gt;</button>
+                                    <!-- PDF PREVIEW -->
+                                    <iframe x-show="vista.type === 'pdf'" :src="vista.src" class="pdf-preview mt-2 rounded" width="100%" height="300px"></iframe>
+
+                                    <!-- DOCX PREVIEW (Rendered HTML) -->
+                                    <div x-show="vista.type === 'docx'" class="docx-preview mt-2" x-html="vista.html"></div>
+
+                                    <!-- OTHER FILES -->
+                                    <p x-show="vista.type === 'other'" x-text="vista.name"></p>
+
+                                    <!-- PAGE COUNT -->
+                                    <p x-show="vista.type !== 'image' && paginas[i] !== undefined">
+                                        Páginas: <strong x-text="paginas[i]"></strong>
+                                    </p>
+                                </div>
+                            </template>
+                            </div>
+                            <button @click="prevFile()" class="btn btn-transparent">&lt;</button>
+                            <button @click="nextFile()" class="btn btn-transparent">&gt;</button>
                         </div>
                     </template>
 
@@ -109,7 +122,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Tipo de Papel</label>
-                        <select class="form-select text-color" x-model="papel" @change="calcularTotal">
+                        <select class="form-select text-color" x-model="settings[indice].papel" @change="calcularTotal">
                             <option value="bond">Papel Bond</option>
                             <option value="opalina">Opalina</option>
                             <option value="fotografico">Fotográfico</option>
@@ -118,7 +131,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Color</label>
-                        <select class="form-select text-color" x-model="color" @change="calcularTotal">
+                        <select class="form-select text-color" x-model="settings[indice].color" @change="calcularTotal">
                             <option value="bn">Blanco y Negro</option>
                             <option value="color">A Color</option>
                         </select>
@@ -127,14 +140,14 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Impresión</label>
-                        <select class="form-select text-color" x-model="caras" @change="calcularTotal">
+                        <select class="form-select text-color" x-model="settings[indice].caras" @change="calcularTotal">
                             <option value="1">Una Cara</option>
                             <option value="2">Ambas Caras</option>
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Número de Copias</label>
-                        <input type="number" class="form-control text-color" placeholder="Cantidad" x-model="cantidad" @input="calcularTotal">
+                        <input type="number" class="form-control text-color" placeholder="Cantidad" x-model="settings[indice].cantidad" @input="calcularTotal">
                     </div>
                 </div>
                 <div class="row">
@@ -156,9 +169,21 @@
                         </select>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cantidad de paginas</label>
+                        <br>
+                        <input type="text" x-model="settings[indice].paginas" @input="calcularTotal">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Paginas a imprimir (<span x-text="settings[indice].paginasTotales"></span>)</label>
+                        <br>
+                        <input type="text" x-model="settings[indice].paginasAImprimir" @input="calcularTotal">
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label class="form-label">Indicaciones</label>
-                    <textarea class="form-control text-color" rows="2" placeholder="Escriba sus indicaciones..." x-model="indicaciones"></textarea>
+                    <textarea class="form-control text-color" rows="2" placeholder="Escriba sus indicaciones..." x-model="settings[indice].indicaciones"></textarea>
                 </div>
             </div>
         </div>

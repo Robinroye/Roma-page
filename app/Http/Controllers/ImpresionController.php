@@ -23,6 +23,7 @@ class ImpresionController extends Controller
         $caras = $request->input('caras');
         $papel = $request->input('papel');
         $cantidad = (int) $request->input('cantidad');
+        $copias = (int) $request->input('copias');
 
         // Verificamos si los datos existen en la estructura de precios
         if (!isset($precios[$color][$caras][$papel])) {
@@ -30,10 +31,10 @@ class ImpresionController extends Controller
         }
 
         $precio_unitario = $precios[$color][$caras][$papel];
-        $subtotal = $precio_unitario * $cantidad;
+        $subtotal = $precio_unitario * $cantidad * $copias;
 
         // Definir costo de envío
-        $envio = ($subtotal >= 120000) ? 0 : 10000;
+        $envio = 0;
 
         // Calcular total
         $total = $subtotal + $envio;

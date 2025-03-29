@@ -44,5 +44,9 @@ class PageController extends Controller
     public function sinCuentas()
     {
         return view('sin-cuentas');
-    } 
+    }
+    public function admin()
+    {
+        return view('admin');
+    }
 }

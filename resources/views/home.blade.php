@@ -52,22 +52,48 @@
                 </a>
             </div>
         </div>
-
         <!-- Carrusel (Columna Derecha) -->
-        <div class="col-md-6 position-relative d-flex align-items-center justify-content-center p-2">
-            <div id="carouselExampleIndicators" class="carousel slide w-100 rounded" data-bs-ride="carousel">
+        <div class="col-md-6 position-relative d-flex align-items-center justify-content-center p-2"
+            x-data="{
+                imagenes: [
+            '{{ asset('images/carousel/1.svg') }}',
+            '{{ asset('images/carousel/2.svg') }}',
+            '{{ asset('images/carousel/3.svg') }}',
+            '{{ asset('images/carousel/4.svg') }}'
+                ],
+                links: {
+            '{{ asset('images/carousel/1.svg') }}': '/impresion',
+            '{{ asset('images/carousel/2.svg') }}': '/variedades',
+            '{{ asset('images/carousel/3.svg') }}': '/plotter',
+            '{{ asset('images/carousel/4.svg') }}': '/otra-seccion'
+                },
+            activeIndex: 0,
+            updateIndex(event) {
+                this.activeIndex = event.to;
+            }
+            }"
+            x-init="
+                let carousel = $refs.carousel;
+                carousel.addEventListener('slid.bs.carousel', event => updateIndex(event));
+            ">
+            <div id="carouselExampleIndicators" class="carousel slide w-100 rounded" data-bs-ride="carousel"
+                x-ref="carousel">
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                    <template x-for="(img, index) in imagenes" :key="index">
+                        <button type="button"
+                            data-bs-target="#carouselExampleIndicators"
+                            :data-bs-slide-to="index"
+                            :class="index === activeIndex ? 'active' : ''"
+                            :aria-label="'Slide ' + (index + 1)">
+                        </button>
+                    </template>
                 </div>
                 <div class="carousel-inner">
-                    @foreach (['1.svg', '2.svg', '3.svg', '4.svg'] as $index => $img)
-                    <div class="carousel-item @if($index == 0) active @endif">
-                        <img src="{{ asset("images/carousel/$img") }}" class="d-block w-100" alt="Imagen del carrusel">
-                    </div>
-                    @endforeach
+                    <template x-for="(img, index) in imagenes" :key="index">
+                        <div class="carousel-item" :class="{ 'active': index === activeIndex }">
+                            <img :src="img" class="d-block w-100" alt="Imagen del carrusel">
+                        </div>
+                    </template>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -78,18 +104,36 @@
                     <span class="visually-hidden">Siguiente</span>
                 </button>
             </div>
-            <button class="btn position-absolute bottom-0 end-0 m-3 btn-transparent">Ver más</button>
+            <button class="btn position-absolute bottom-0 end-0 m-3 btn-transparent"
+                @click="window.location.href = links[imagenes[activeIndex]]">
+                Ver más
+            </button>
         </div>
-        <!-- Aquí va la calculadora -->
     </div>
     <!-- Second Row -->
     <div class="row">
-        @foreach (['Frame1.svg', 'Frame2.svg', 'Frame3.svg', 'Frame4.svg'] as $img)
-        <div class="col-12 col-md-6 col-lg-3 position-relative d-flex align-items-center justify-content-center mb-2">
-            <img src="{{ asset("images/fixed/$img") }}" class="img-fluid w-100" alt="Imagen fija">
-            <button class="btn position-absolute bottom-0 end-0 m-3 btn-transparent">Ver más</button>
+        @php
+        // Mapeo de imágenes a sus respectivas URLs
+        $links = [
+        'Frame1.svg' => 'https://maps.app.goo.gl/m8Jwzhvm539UNPCX7', // Google Maps
+        'Frame2.svg' => route('impresion'), // Ruta a Impresiones
+        'Frame3.svg' => route('variedades'), // Ruta a Variedades
+        'Frame4.svg' => route('plotter'), // Ruta a Plotter
+        ];
+        @endphp
+
+        <div class="row">
+            @foreach ($links as $img => $url)
+            <div class="col-12 col-md-6 col-lg-3 position-relative d-flex align-items-center justify-content-center mb-2">
+                <img src="{{ asset("images/fixed/$img") }}" class="img-fluid w-100" alt="Imagen fija">
+                <a href="{{ $url }}"
+                    class="btn position-absolute bottom-0 end-0 m-3 btn-transparent"
+                    @if (Str::startsWith($url, 'https://maps.app.goo.gl/m8Jwzhvm539UNPCX7' )) target="_blank" @endif>
+                    Ver más
+                </a>
+            </div>
+            @endforeach
         </div>
-        @endforeach
     </div>
 </div>
 @endsection

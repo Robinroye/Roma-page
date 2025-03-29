@@ -4,6 +4,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\VariedadesController;
 use App\Http\Controllers\ImpresionController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -25,3 +26,5 @@ Route::get('/variedades', [VariedadesController::class, 'index'])->name('varieda
 Route::get('/producto/{id}', [VariedadesController::class, 'show'])->name('detalle.producto');
 Route::get('/variedades/producto/{id}', [VariedadesController::class, 'show'])->name('variedades.show');
 Route::post('/calcular-precio', [ImpresionController::class, 'calcularPrecio']);
+Route::post('/admin/store', [ProductController::class, 'store'])->name('admin.store');
+Route::get('/admin', [PageController::class, 'admin'])->name('admin');

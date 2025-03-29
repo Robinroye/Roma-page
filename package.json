@@ -17,6 +17,8 @@
     },
     "dependencies": {
         "alpinejs": "^3.14.8",
-        "bootstrap": "^5.3.3"
+        "bootstrap": "^5.3.3",
+        "docx-preview": "^0.3.4",
+        "pdfjs-dist": "^4.10.38"
     }
 }
