@@ -10,12 +10,14 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('exchange_rates', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('exchange_rates', function (Blueprint $table) {
+        $table->id();
+        $table->decimal('tasa', 10, 2); // Tasa manual del admin
+        $table->timestamps();
+    });
+}
+
 
     /**
      * Reverse the migrations.

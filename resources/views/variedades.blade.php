@@ -13,7 +13,9 @@
                         <div id="carousel-{{ $producto->id }}" class="carousel slide">
                             <div class="carousel-inner">
                                 @foreach (json_decode($producto->imagenes ?? '[]') as $imagen)
-                                <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del producto">
+                                    <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                        <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del producto">
+                                    </div>
                                 @endforeach
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="prev">
@@ -38,11 +40,12 @@
                         <div class="d-flex justify-content-between">
                             <input type="number" autocomplete="off" class="form-control form-control-sm w-50" placeholder="Cantidad">
                             <a @click="addToCart('variedad', {
-    id: {{ $producto->id }},
-    nombre: '{{ $producto->nombre }}',
-    precio: '{{ $producto->precio }}',
-    imagen: '{{ json_decode($producto->imagenes)[0] }}',
-    cantidad: $el.parentElement.querySelector('input').value || 1
+                                productoId: {{ $producto->id }},
+                                id: `${Math.random().toString(36).substr(2, 9)}`,
+                        nombre: '{{ $producto->nombre }}',
+                        precio: '{{ $producto->precio }}',
+                        imagen: '{{ json_decode($producto->imagenes)[0] }}',
+                        cantidad: $el.parentElement.querySelector('input').value || 1
 })">
                                 <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito" width="20">
                             </a>
@@ -70,7 +73,7 @@
                                 <div class="carousel-inner">
                                     <template x-for="(imagen, index) in producto.imagenes" :key="index">
                                         <div class="carousel-item" :class="{ 'active': index === 0 }">
-                                            <img :src="imagen" class="d-block w-100 img-fluid rounded" alt="Imagen del producto">
+                                            <img :src="`/storage/${imagen}`" class="d-block w-100 img-fluid rounded" alt="Imagen del producto">
                                         </div>
                                     </template>
                                 </div>
@@ -91,7 +94,8 @@
                             <div class="d-flex align-items-center mt-3">
                                 <input type="number" autocomplete="off" class="form-control w-50 me-2" placeholder="Cantidad">
                                 <button class="btn btn-transparent btn-sm" @click="addToCart('variedad', {
-    id: producto.id,
+    productoId: producto.id,
+    id: `${Math.random().toString(36).substr(2, 9)}`,
     nombre: producto.nombre,
     precio: producto.precio,
     imagen: producto.imagenes[0],

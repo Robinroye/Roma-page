@@ -9,6 +9,7 @@ function impresionData() {
         caras: '1',
         cantidad: 0,
         total: 0,
+        totalConCopias: 0,
         envio: 0,
         archivos: [],
         paginas: [],
@@ -17,16 +18,20 @@ function impresionData() {
         indice: 0,
         indicaciones: '',
         paginasTotales: 0,
-        settings: [
-          {papel: 'bond',
-            color: 'bn',
-            caras: '1',
-            cantidad: 0,
-            total: 0,
-            paginas: 0,
-            paginasAImprimir: "0-0",
-            indicaciones: '',
-            paginasTotales: 0,}  
+        started: false,
+        impresionBNPermitido: [
+            "bond"
+        ],
+        settings: [ 
+            {papel: 'bond',
+                color: 'bn',
+                caras: '1',
+                cantidad: 0,
+                total: 0,
+                paginas: 0,
+                paginasAImprimir: "0-0",
+                indicaciones: '',
+                paginasTotales: 0,}  
         ],
         init(){
             this.calcularTotal();
@@ -35,18 +40,20 @@ function impresionData() {
             this.calculateTotalPages();
             axios.post('/calcular-precio', {
                 papel: this.settings[this.indice].papel,
-                color: this.settings[this.indice].color,
+                color: this.impresionBNPermitido.includes(this.settings[this.indice].papel)?this.settings[this.indice].color: "color",
                 caras: this.settings[this.indice].caras,
                 cantidad: this.settings[this.indice].paginasTotales,
-                copias: parseInt(this.settings[this.indice].cantidad)
+                copias: 1
             })
             .then(response => {
-                this.total+= response.data.total;
-                this.envio = response.data.envio;
+                this.settings[this.indice].total = response.data.total;
+                this.actualizarTotal();
             })
             .catch(error => {
                 console.error("Error en el cálculo de precio:", error);
             });
+            console.log(this.settings)
+
         },
         prevFile(){
             this.indice = (this.indice - 1 + this.vistasPrevias.length) % this.vistasPrevias.length
@@ -55,9 +62,14 @@ function impresionData() {
             this.indice = (this.indice + 1) % this.vistasPrevias.length
         },
         cargarArchivos(event) {
-            this.archivos = [...this.archivos, ...Array.from(event.target.files)];
+            this.archivos = [...this.archivos, event.target.files[0]];
+            console.log(this.archivos, "sd")
             this.archivos.forEach((archivo, index) => {
-                if(index + 1 < this.settings.length)return
+                if(!this.started){
+                    this.settings= []
+                    this.started= true
+                }
+                if(index != this.settings.length)return
                 this.settings= [...this.settings,
                     {papel: 'bond',
                       color: 'bn',
@@ -78,6 +90,7 @@ function impresionData() {
                             this.settings[index].paginasAImprimir = `1-1`;
                             this.settings[index].paginasTotales= 1;
                             this.vistasPrevias.push({type:"img", src: e.target.result});
+                            this.indice= this.vistasPrevias.length - 1;
                         
                     };
                     reader.readAsDataURL(archivo);
@@ -95,10 +108,16 @@ function impresionData() {
                     this.paginas.push(0); // Unknown file type
                 }
             });
-            this.indice= this.vistasPrevias.length - 1;
 
         },
-        
+        actualizarTotal(){
+            this.total = 0;
+            this.totalConCopias = 0;
+            this.settings.forEach((setting) => {
+                this.total += setting.total;
+                this.totalConCopias += setting.total * setting.cantidad;
+            });
+        },
         async countPdfPages(file, index) {
             const reader = new FileReader();
             reader.onload = async (e) => {
@@ -109,10 +128,12 @@ function impresionData() {
                 this.settings[index].paginas= pdf.numPages;
                 this.settings[index].paginasAImprimir = `1-${pdf.numPages}`;
                 this.settings[index].paginasTotales= pdf.numPages;
+                this.indice= this.vistasPrevias.length - 1;
             };
             reader.readAsArrayBuffer(file);
+
         },
-        countDocxPages(archivo, index) {
+        async countDocxPages(archivo, index) {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const container = document.createElement("div");
@@ -141,12 +162,14 @@ function impresionData() {
                     this.settings[index].paginas= pageCount;
                     this.settings[index].paginasAImprimir = `1-${pageCount}`;
                     this.settings[index].paginasTotales= pageCount;
+                    this.indice= this.vistasPrevias.length - 1;
                 });
         
                 // Remove hidden container
                 document.body.removeChild(container);
             };
             reader.readAsArrayBuffer(archivo);
+
         },
 
         calculateTotalPages() {

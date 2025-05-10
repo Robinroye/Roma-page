@@ -1,4 +1,3 @@
-
 export function carrito() {
     return {
         carrito:  [],
@@ -6,12 +5,60 @@ export function carrito() {
         itemCount: 0,
         
         totalCarrito: 0,
+
+        userPhone: '',
         
         init(){
             this.carrito= JSON.parse(localStorage.getItem('carrito')) || [];
             this.updateCart();
         },
-        addToCart(tipo, producto) {
+        addToCart(tipo, producto, impresionArchivos) {
+            if (tipo === 'impresion') {
+                producto.forEach((setting, index) => {
+                    let archivo = impresionArchivos[index];
+                    if (archivo) {
+                        const formData = new FormData();
+                        formData.append('file', archivo);
+
+                        // Upload the file asynchronously
+                        fetch('/upload-file', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                let impresion = {
+                                    id: `${Math.random().toString(36).substr(2, 9)}`,
+                                    impresion_papel: setting.papel,
+                                    impresion_color: setting.color,
+                                    impresion_caras: setting.caras,
+                                    impresion_indicaciones: setting.indicaciones,
+                                    impresion_archivos: data.file_url, // Store the uploaded file URL
+                                    impresion_paginas_totales: setting.paginasTotales,
+                                    impresion_paginas: setting.paginas,
+                                    impresion_paginas_a_imprimir: setting.paginasAImprimir,
+                                    precio: setting.total,
+                                    cantidad: setting.cantidad || 1,
+                                };
+
+                                this.carrito.push({ ...impresion, tipo });
+                                this.updateCart();
+                            } else {
+                                alert('Error al subir el archivo.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al subir el archivo:', error);
+                            alert('Error inesperado al subir el archivo.');
+                        });
+                    }
+                });
+                return;
+            }
             let index = this.carrito.findIndex(p => p.id === producto.id && p.tipo === tipo);
             
             if (index !== -1) {
@@ -57,6 +104,45 @@ export function carrito() {
             this.itemCount = this.carrito.reduce((total, item) => total + Number(item.cantidad), 0);
 
             localStorage.setItem('carrito', JSON.stringify(this.carrito));
+        },
+        enviarPedido(userPhone) {
+            if (!userPhone) {
+                alert('Por favor ingresa tu número de celular.');
+                return;
+            }
+
+            const pedido = {
+                user_phone: userPhone,
+                tipo: 'pedido', // puedes ajustar según el tipo si lo necesitas
+                total: this.totalCarrito,
+                detalles: this.carrito
+            };
+
+            fetch('/guardar-pedido', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                   'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(pedido)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Pedido enviado correctamente. ID: ' + data.order_id);
+                    this.carrito = [];
+                    this.updateCart();
+                    localStorage.removeItem('carrito');
+                } else {
+                    alert('Error al guardar el pedido.');
+                }
+            })
+            .catch(error => {
+                console.error('Error al enviar el pedido:', error);
+                alert('Error inesperado al enviar el pedido.');
+            });
         }
+
     };
 }

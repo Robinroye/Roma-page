@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExchangeRate;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Cuenta; // Importa el modelo Cuenta
+use App\Models\PrintOption;
 
 class PageController extends Controller
 {
-    public function home()
-    {
-        return view('home');
-    }
-
     public function giros()
     {
         return view('giros');
@@ -24,7 +22,8 @@ class PageController extends Controller
 
     public function impresion()
     {
-        return view('impresion');
+        $tiposPapel = PrintOption::pluck('tipo_papel')->unique();
+        return view('impresion')->with('tiposPapel', $tiposPapel);
     }
 
     public function plotter()
@@ -47,6 +46,18 @@ class PageController extends Controller
     }
     public function admin()
     {
-        return view('admin');
+        $productos = \App\Models\Product::all();
+        $tiposDeImpresion = \App\Models\PrintOption::all();
+        $tasa = \App\Models\ExchangeRate::latest()->first();
+        return view('admin', compact('productos', 'tasa', 'tiposDeImpresion'));
+    }
+    public function home()
+    {
+        return view('home');
+    }
+
+    public function cuentas()
+    {
+        return view('cuentas');
     }
 }

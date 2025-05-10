@@ -15,6 +15,7 @@ export function detalleProducto() {
                 }
                 const data = await response.json();
                 this.producto = data;
+                this.producto.imagenes= JSON.parse(this.producto.imagenes)
             } catch (error) {
                 console.error('Error:', error);
                 alert('Hubo un problema al cargar los datos del producto.');

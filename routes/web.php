@@ -1,11 +1,16 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\VariedadesController;
 use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExchangeRateController;
+use App\Http\Controllers\PrintOptionController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\FileController;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/giros', [PageController::class, 'giros'])->name('giros');
@@ -28,3 +33,17 @@ Route::get('/variedades/producto/{id}', [VariedadesController::class, 'show'])->
 Route::post('/calcular-precio', [ImpresionController::class, 'calcularPrecio']);
 Route::post('/admin/store', [ProductController::class, 'store'])->name('admin.store');
 Route::get('/admin', [PageController::class, 'admin'])->name('admin');
+Route::put('/admin/tasa', [ExchangeRateController::class, 'update'])->name('exchange-rate.update');
+Route::get('/precios-impresion', [ImpresionController::class, 'precios']);
+Route::post('/admin/storeTipoImpresion', [PrintOptionController::class, 'store'])->name('admin.storeTipoImpresion');
+Route::patch('/admin/updateTipoImpresion/{id}', [PrintOptionController::class, 'update'])->name('admin.updateTipoImpresion');
+Route::delete('/admin/deleteTipoImpresion/{id}', [PrintOptionController::class, 'destroy'])->name('admin.deleteTipoImpresion');
+Route::get('/admin', [PageController::class, 'admin'])->name('admin');
+Route::delete('/admin/productos/{id}', [ProductController::class, 'destroy'])->name('productos.destroy');
+Route::put('/productos/{id}', [ProductController::class, 'update'])->name('productos.update');
+Route::post('/guardar-pedido', [PedidoController::class, 'store']);
+Route::post('/upload-file', [FileController::class, 'upload'])->name('upload-file');
+Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index');
+Route::get('/pedidos/{id}', [PedidoController::class, 'show'])->name('pedidos.show');
+Route::put('/pedidos/{id}', [PedidoController::class, 'update'])->name('pedidos.update');
+Route::delete('/pedidos/{id}', [PedidoController::class, 'destroy'])->name('pedidos.destroy');

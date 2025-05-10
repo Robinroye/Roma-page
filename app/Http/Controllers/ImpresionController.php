@@ -3,40 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PrintOption;
 
 class ImpresionController extends Controller
 {
+    // Método para calcular precio desde el frontend dinámicamente
     public function calcularPrecio(Request $request)
     {
-        $precios = [
-            'bn' => [
-                '1' => ['bond' => 400, 'opalina' => 2500, 'fotografico' => 3500, 'adhesivo' => 2500],
-                '2' => ['bond' => 600, 'opalina' => 3500, 'fotografico' => 3500, 'adhesivo' => 2500]
-            ],
-            'color' => [
-                '1' => ['bond' => 2000, 'opalina' => 3500, 'fotografico' => 3500, 'adhesivo' => 2500],
-                '2' => ['bond' => 3000, 'opalina' => 3500, 'fotografico' => 3500, 'adhesivo' => 2500]
-            ]
-        ];
+        $color = $request->input('color');     // 'bn' o 'color'
+        $caras = $request->input('caras');     // '1' o '2'
+        $papel = $request->input('papel');     // 'bond', 'opalina', etc.
+        $cantidad = (int) $request->input('cantidad'); // páginas a imprimir
+        $copias = (int) $request->input('copias');     // número de copias
 
-        $color = $request->input('color');
-        $caras = $request->input('caras');
-        $papel = $request->input('papel');
-        $cantidad = (int) $request->input('cantidad');
-        $copias = (int) $request->input('copias');
+        // Buscar el precio unitario en la base de datos
+        $opcion = PrintOption::where('tipo_papel', $papel)
+            ->where('color', $color)
+            ->first();
 
-        // Verificamos si los datos existen en la estructura de precios
-        if (!isset($precios[$color][$caras][$papel])) {
-            return response()->json(['error' => 'Datos inválidos'], 400);
+        if (!$opcion) {
+            return response()->json(['error' => 'Datos inválidos. No se encontró precio.'], 400);
         }
 
-        $precio_unitario = $precios[$color][$caras][$papel];
+        // Si es a doble cara, puedes aplicar un ajuste (opcional)
+        $multiplicador = $caras == '2' ? 1.5 : 1;
+
+        $precio_unitario = intval($opcion->precio * $multiplicador);
+
         $subtotal = $precio_unitario * $cantidad * $copias;
 
-        // Definir costo de envío
+        // Aquí puedes definir reglas de envío si las necesitas
         $envio = 0;
 
-        // Calcular total
         $total = $subtotal + $envio;
 
         return response()->json([
@@ -45,5 +43,11 @@ class ImpresionController extends Controller
             'total' => $total
         ]);
     }
-}
 
+    // ✅ Método nuevo para devolver todos los precios al frontend
+    public function precios()
+    {
+        $printOptions = PrintOption::all();
+        return response()->json($printOptions);
+    }
+}
