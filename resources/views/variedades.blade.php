@@ -3,11 +3,11 @@
 @section('title', 'Variedades')
 
 @section('content')
-<div x-data="detalleProducto()">
+<div x-data="detalleProducto()" class="variedades">
     <div class="container-fluid">
         <div class="row">
             @foreach ($productos as $producto)
-            <div class="col-md-3 mb-3" id="item-{{ $producto->id }}">
+            <div class="col-md-3 mb-3 variedad" id="item-{{ $producto->id }}">
                 <div class="card h-100">
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         <div id="carousel-{{ $producto->id }}" class="carousel slide">

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Cuenta; // Importa el modelo Cuenta
 use App\Models\PrintOption;
+use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
@@ -35,7 +36,29 @@ class PageController extends Controller
     {
         return view('carrito');
     }
-
+    public function generarPago(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|integer|min:1'
+            // 'phone' => 'string|nullable' // Puedes validar si lo deseas
+        ]);
+    
+        $amountInCents = $request->amount;
+        $currency = 'COP';
+        $reference = 'PEDIDO_' . Str::random(10);
+        $integritySecret = env('WOMPI_INTEGRITY_SECRET');
+    
+        $firma = hash('sha256', $reference . $amountInCents . $currency . $integritySecret);
+    
+        return response()->json([
+            'reference' => $reference,
+            'amountInCents' => $amountInCents,
+            'currency' => $currency,
+            'firma' => $firma,
+            'publicKey' => env('WOMPI_PUBLIC_KEY'),
+            'phone' => $request->phone // <-- add this line
+        ]);
+    }
     public function ayuda()
     {
         return view('ayuda');

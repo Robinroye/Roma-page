@@ -11,6 +11,8 @@ use App\Http\Controllers\ExchangeRateController;
 use App\Http\Controllers\PrintOptionController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\WompiController;
+use App\Http\Controllers\GiroController;
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/giros', [PageController::class, 'giros'])->name('giros');
@@ -18,6 +20,8 @@ Route::get('/variedades', [PageController::class, 'variedades'])->name('variedad
 Route::get('/impresion', [PageController::class, 'impresion'])->name('impresion');
 Route::get('/plotter', [PageController::class, 'plotter'])->name('plotter');
 Route::get('/carrito', [PageController::class, 'carrito'])->name('carrito');
+Route::post('/carrito/pago', [PageController::class, 'generarPago']);
+Route::post('/wompi/webhook', [WompiController::class, 'webhook']);
 Route::get('/ayuda', [PageController::class, 'ayuda'])->name('ayuda');
 Route::get('/sin-cuentas', [PageController::class, 'sinCuentas'])->name('sin-cuentas');
 Route::post('/guardar-cuenta', [CuentaController::class, 'guardarCuenta'])->name('guardar-cuenta');
@@ -47,3 +51,8 @@ Route::get('/pedidos', [PedidoController::class, 'index'])->name('pedidos.index'
 Route::get('/pedidos/{id}', [PedidoController::class, 'show'])->name('pedidos.show');
 Route::put('/pedidos/{id}', [PedidoController::class, 'update'])->name('pedidos.update');
 Route::delete('/pedidos/{id}', [PedidoController::class, 'destroy'])->name('pedidos.destroy');
+
+Route::get('/girosOrders', [GiroController::class, 'index'])->name('girosOrders.index');
+Route::get('/girosOrders/{id}', [GiroController::class, 'show'])->name('girosOrders.show');
+Route::put('/girosOrders/{id}', [GiroController::class, 'update'])->name('girosOrders.update');
+Route::delete('/girosOrders/{id}', [GiroController::class, 'destroy'])->name('girosOrders.destroy');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Giro;
 
 class PedidoController extends Controller
 {
@@ -17,6 +18,8 @@ class PedidoController extends Controller
         ]);
 
         $detalles = $request->detalles;
+        $orderDetalles = [];
+        $giroDetalles = [];
 
         foreach ($detalles as $detalle) {
             if (isset($detalle['tipo']) && $detalle['tipo'] === 'impresion' && isset($detalle['impresion_archivos'])) {
@@ -26,15 +29,32 @@ class PedidoController extends Controller
                     $detalle['impresion_archivos'] = asset(str_replace('public', 'storage', $filePath));
                 }
             }
+            if (isset($detalle['tipo']) && $detalle['tipo'] === 'giro') {
+                $giroDetalles[] = $detalle;
+            } else {
+                $orderDetalles[] = $detalle;
+            }
         }
 
-        $order = Order::create([
-            'user_phone' => $request->user_phone,
-            'tipo' => $request->tipo,
-            'total' => $request->total,
-            'detalles' => $detalles,
-            'estado' => 'pendiente',
-        ]);
+        if (!empty($orderDetalles)) {
+            $order = Order::create([
+                'user_phone' => $request->user_phone,
+                'tipo' => $request->tipo,
+                'total' => $request->total,
+                'detalles' => $orderDetalles,
+                'estado' => 'pendiente',
+            ]);
+        }
+        // Create a single Giro entry if there are any giro detalles
+        if (!empty($giroDetalles)) {
+            Giro::create([
+                'user_phone' => $request->user_phone,
+                'tipo' => $request->tipo,
+                'total' => $request->total,
+                'detalles' => $giroDetalles,
+                'estado' => 'pendiente',
+            ]);
+        }
 
         return response()->json([
             'success' => true,

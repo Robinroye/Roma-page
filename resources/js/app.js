@@ -10,6 +10,8 @@ import { carrito } from './carrito.js';
 import { calculadora } from './calculadora.js';
 import { detalleProducto } from './detalleProducto.js';
 import { admin } from './admin.js';
+import { adminGiros } from './adminGiros.js';
+import { adminPedidos } from './adminPedidos.js';
 import impresionData from "./impresion";
 
 // ✅ Hacer que las funciones sean accesibles globalmente si es necesario
@@ -19,5 +21,7 @@ window.calculadora = calculadora;
 window.detalleProducto = detalleProducto;
 window.impresionData = impresionData;
 window.admin = admin;
+window.adminGiros = adminGiros;
+window.adminPedidos = adminPedidos;
 // ✅ Iniciar Alpine.js
 Alpine.start();

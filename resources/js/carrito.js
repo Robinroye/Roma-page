@@ -104,33 +104,67 @@ export function carrito() {
             this.itemCount = this.carrito.reduce((total, item) => total + Number(item.cantidad), 0);
 
             localStorage.setItem('carrito', JSON.stringify(this.carrito));
+            this.generateWompi()
+        },
+        async generateWompi(){
+            fetch('/carrito/pago', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    amount: this.totalCarrito * 100,
+                    detalles: this.carrito,
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let script = document.createElement('script');
+                script.src = 'https://checkout.wompi.co/widget.js';
+                script.setAttribute('data-render', 'button');
+                script.setAttribute('data-public-key', data.publicKey);
+                script.setAttribute('data-currency', data.currency);
+                script.setAttribute('data-amount-in-cents', data.amountInCents);
+                script.setAttribute('data-reference', data.reference);
+                script.setAttribute('data-signature:integrity', data.firma);
+
+                document.getElementById('contenedor-wompi').innerHTML = ''; // Limpia anterior
+                document.getElementById('contenedor-wompi').appendChild(script);
+            });
         },
         enviarPedido(userPhone) {
             if (!userPhone) {
                 alert('Por favor ingresa tu número de celular.');
                 return;
             }
-
             const pedido = {
                 user_phone: userPhone,
                 tipo: 'pedido', // puedes ajustar según el tipo si lo necesitas
                 total: this.totalCarrito,
                 detalles: this.carrito
             };
+            this.generateWompi(pedido);
 
+            // NOTA:
+            // Si estás en localhost, no puedes recibir el webhook de Wompi para crear el pedido automáticamente después del pago.
+            // Debes crear el pedido ANTES de mostrar el botón de pago, o pedir al usuario que confirme manualmente después del pago.
+            // Ejemplo para desarrollo local: crea el pedido antes del pago (descomenta si lo deseas):
+
+            /*
             fetch('/guardar-pedido', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                   'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify(pedido)
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Pedido enviado correctamente. ID: ' + data.order_id);
+                    alert('Pedido registrado localmente. Ahora realiza el pago.');
                     this.carrito = [];
                     this.updateCart();
                     localStorage.removeItem('carrito');
@@ -142,6 +176,7 @@ export function carrito() {
                 console.error('Error al enviar el pedido:', error);
                 alert('Error inesperado al enviar el pedido.');
             });
+            */
         }
 
     };

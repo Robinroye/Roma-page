@@ -3,7 +3,7 @@
 @section('title', 'Admin')
 
 @section('content')
-    <div class="container-fluid mt-4" x-data="admin">
+    <div class="container-fluid mt-4">
         <h2 class="text-center">Panel de Administración</h2>
 
         <!-- Tabs de navegación -->
@@ -57,8 +57,107 @@
 
             <!-- Sección Giros -->
             <div class="tab-pane fade" id="giros" role="tabpanel">
-                <h4>Administración de Giros</h4>
-                <p>Aquí se gestionarán los giros.</p>
+                <h4 class="text-center mb-4">Administración de Giros</h4>
+                <div class="container" x-data="adminGiros">
+
+                    <div class="row">
+                        <div class="col-md-12 d-flex align-items-center mb-3">
+                            <label class="me-3">
+                                <input type="checkbox" x-model="showPending" class="me-1" autocomplete="off"> Pendientes
+                            </label>
+                            <label>
+                                <input type="checkbox" x-model="showCompleted" class="me-1" autocomplete="off">
+                                Completados
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="accordion" id="pedidosAccordion">
+                                <template x-for="pedido in orders" :key="pedido.id">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" :id="`heading${pedido.id}`">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" :data-bs-target="`#collapse${pedido.id}`"
+                                                aria-expanded="false" :aria-controls="`collapse${pedido.id}`"
+                                                x-text="`Pedido #${pedido.id} | ${pedido.user_phone}`">
+
+                                            </button>
+                                        </h2>
+                                        <div :id="`collapse${pedido.id}`" class="accordion-collapse collapse"
+                                            :aria-labelledby="`heading${pedido.id}`" data-bs-parent="#pedidosAccordion">
+                                            <div class="accordion-body">
+                                                <div class="btn-group mt-3" role="group" aria-label="Acciones">
+                                                    <button type="button" class="btn btn-primary"
+                                                        :class="!allDetailsCompleted(pedido.id) && pedido.estado== 'pendiente' ?
+                                                            'disabled' : ''"
+                                                        @click="pedido.estado== 'pendiente'?completeOrder(pedido.id):dontCompleteOrder(pedido.id)"
+                                                        x-text="pedido.estado== 'despachado'? 'Pendiente': 'Completado'">Completado</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        @click="destroyOrder(pedido.id)">Eliminar pedido</button>
+                                                </div>
+                                                <template x-for="(detalle, indexDetalle) in pedido.detalles"
+                                                    :key="indexDetalle">
+                                                    <div class="pedido">
+                                                        <template x-if="detalle.tipo == 'giro'">
+                                                            <div class="pedido-detalle"
+                                                                :class="completionOrders[pedido.id][detalle.id] ? 'completed' :
+                                                                    ''">
+                                                                <hr x-show="!!indexDetalle">
+                                                                <label>
+                                                                    <strong>Tipo de item:</strong>
+                                                                    <span>Giro</span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Monto BSS:</strong>
+                                                                    <span x-text="detalle.monto_bss"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Monto USD:</strong>
+                                                                    <span x-text="detalle.monto_dolares"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Monto COP:</strong>
+                                                                    <span x-text="detalle.monto_cop"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Pago Móvil:</strong>
+                                                                    <span x-text="detalle.pago_movil"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Número de cuenta:</strong>
+                                                                    <span x-text="detalle.numero_cuenta"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Titular:</strong>
+                                                                    <span x-text="detalle.nombre_titular"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Documento:</strong>
+                                                                    <span
+                                                                        x-text="`(${detalle.tipo_documento}) ${detalle.numero_documento}`"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Completado:</strong>
+                                                                    <input type="checkbox"
+                                                                        x-model="completionOrders[pedido.id][detalle.id]"
+                                                                        autocomplete="off"
+                                                                        @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)"
+                                                                        :checked="detalle.completado"
+                                                                        class="form-check-input">
+                                                                </label>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Sección Variedades / Productos -->
@@ -82,8 +181,8 @@
 
                                     <div class="mb-3">
                                         <label class="form-label">Precio</label>
-                                        <input type="number" name="precio" class="form-control" placeholder="Ej: 50000"
-                                            required>
+                                        <input type="number" name="precio" class="form-control"
+                                            placeholder="Ej: 50000" required>
                                     </div>
 
                                     <div class="mb-3">
@@ -99,8 +198,8 @@
 
                                     <div class="mb-3">
                                         <label class="form-label">Selecciona una imagen:</label>
-                                        <input type="file" name="imagenes[]" id="imagenes" class="form-control" multiple
-                                            accept="image/*"
+                                        <input type="file" name="imagenes[]" id="imagenes" class="form-control"
+                                            multiple accept="image/*"
                                             x-on:change="preview = [...$event.target.files].map(file => URL.createObjectURL(file))">
                                     </div>
 
@@ -269,15 +368,17 @@
             </div>
             <div class="tab-pane fade" id="pedidos" role="tabpanel">
                 <h4 class="text-center mb-4">Administración de Pedidos</h4>
-                <div class="container">
-                        
+                <div class="container" x-data="adminPedidos">
+
                     <div class="row">
                         <div class="col-md-12 d-flex align-items-center mb-3">
                             <label class="me-3">
-                                <input type="checkbox" x-model="showPending" class="me-1" autocomplete="off"> Pendientes
+                                <input type="checkbox" x-model="showPending" class="me-1" autocomplete="off">
+                                Pendientes
                             </label>
                             <label>
-                                <input type="checkbox" x-model="showCompleted" class="me-1" autocomplete="off"> Completados
+                                <input type="checkbox" x-model="showCompleted" class="me-1" autocomplete="off">
+                                Completados
                             </label>
                         </div>
                     </div>
@@ -287,142 +388,128 @@
                                 <template x-for="pedido in orders" :key="pedido.id">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" :id="`heading${pedido.id}`">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapse${pedido.id}`" aria-expanded="false" :aria-controls="`collapse${pedido.id}`" x-text="`Pedido #${pedido.id} | ${pedido.user_phone}`">
-                                                
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" :data-bs-target="`#collapse${pedido.id}`"
+                                                aria-expanded="false" :aria-controls="`collapse${pedido.id}`"
+                                                x-text="`Pedido #${pedido.id} | ${pedido.user_phone}`">
+
                                             </button>
                                         </h2>
-                                        <div :id="`collapse${pedido.id}`" class="accordion-collapse collapse" :aria-labelledby="`heading${pedido.id}`" data-bs-parent="#pedidosAccordion">
+                                        <div :id="`collapse${pedido.id}`" class="accordion-collapse collapse"
+                                            :aria-labelledby="`heading${pedido.id}`" data-bs-parent="#pedidosAccordion">
                                             <div class="accordion-body">
                                                 <div class="btn-group mt-3" role="group" aria-label="Acciones">
-                                                    <button type="button" class="btn btn-primary" :class="!allDetailsCompleted(pedido.id)? 'disabled': ''" @click="pedido.estado== 'pendiente'?completeOrder(pedido.id):dontCompleteOrder(pedido.id)" x-text="pedido.estado== 'despachado'? 'Pendiente': 'Completado'">Completado</button>
-                                                    <button type="button" class="btn btn-danger" @click="destroyOrder(pedido.id)">Eliminar pedido y archivos</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                        :class="!allDetailsCompleted(pedido.id) &&
+                                                            pedido.estado== 'pendiente' ? 'disabled' : ''"
+                                                        @click="pedido.estado== 'pendiente'?completeOrder(pedido.id):dontCompleteOrder(pedido.id)"
+                                                        x-text="pedido.estado== 'despachado'? 'Pendiente': 'Completado'">Completado</button>
+                                                    <button type="button" class="btn btn-danger"
+                                                        @click="destroyOrder(pedido.id)">Eliminar pedido y
+                                                        archivos</button>
                                                 </div>
-                                                    <template x-for="(detalle, indexDetalle) in pedido.detalles" :key="indexDetalle">
-                                                        <div class="pedido">
-                                                            <template x-if="detalle.tipo == 'impresion'">
-                                                                <div class="pedido-detalle" :class="completionOrders[pedido.id][detalle.id]? 'completed': ''">
-                                                                    <hr x-show="!!indexDetalle">  
-                                                                    <label>
-                                                                        <strong>Tipo de item:</strong>
-                                                                        <span>Impresión</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Precio unitario:</strong>
-                                                                        <span x-text="detalle.precio"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Cantidad:</strong>
-                                                                        <span x-text="detalle.cantidad"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Caras:</strong>
-                                                                        <span x-text="detalle.impresion_caras"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Color:</strong>
-                                                                        <span x-text="detalle.impresion_color"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Papel:</strong>
-                                                                        <span x-text="detalle.impresion_papel"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Páginas por impresión:</strong>
-                                                                        <span x-text="detalle.impresion_paginas"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Páginas totales:</strong>
-                                                                        <span x-text="detalle.impresion_paginas * detalle.cantidad"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Archivo adjunto:</strong>
-                                                                        <a :href="`/storage/uploads/${detalle.impresion_archivos?.split('/').pop()}`" target="_blank" download>
-                                                                            Descargar
-                                                                        </a>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Indicaciones:</strong>
-                                                                        <span x-text="detalle.impresion_indicaciones"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Completado:</strong>
-                                                                        <input type="checkbox" x-model="completionOrders[pedido.id][detalle.id]" autocomplete="off" @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)" :checked="detalle.completado" class="form-check-input">   
-                                                                    </label>
-                                                                </div>
-                                                            </template>
-                                                            <template x-if="detalle.tipo == 'variedad'">
-                                                                <div class="pedido-detalle" :class="completionOrders[pedido.id][detalle.id]? 'completed': ''">
-                                                                    <hr x-show="!!indexDetalle">  
-                                                                    <label>
-                                                                        <strong>Tipo de item:</strong>
-                                                                        <span>Variedad</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Código del producto:</strong>
-                                                                        <span x-text="detalle.productoId"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Nombre:</strong>
-                                                                        <span x-text="detalle.nombre"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Precio:</strong>
-                                                                        <span x-text="detalle.precio"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Cantidad:</strong>
-                                                                        <span x-text="detalle.cantidad"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Completado:</strong>
-                                                                        <input type="checkbox" x-model="completionOrders[pedido.id][detalle.id]" autocomplete="off" @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)" :checked="detalle.completado" class="form-check-input">   
-                                                                    </label>
-                                                                </div>
-                                                            </template>
-                                                            <template x-if="detalle.tipo == 'giro'">
-                                                                <div class="pedido-detalle" :class="completionOrders[pedido.id][detalle.id]? 'completed': ''">
-                                                                    <hr x-show="!!indexDetalle">  
-                                                                    <label>
-                                                                        <strong>Tipo de item:</strong>
-                                                                        <span>Giro</span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Monto BSS:</strong>
-                                                                        <span x-text="detalle.monto_bss"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Monto USD:</strong>
-                                                                        <span x-text="detalle.monto_dolares"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Monto COP:</strong>
-                                                                        <span x-text="detalle.monto_cop"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Pago Móvil:</strong>
-                                                                        <span x-text="detalle.pago_movil"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Número de cuenta:</strong>
-                                                                        <span x-text="detalle.numero_cuenta"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Titular:</strong>
-                                                                        <span x-text="detalle.nombre_titular"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Documento:</strong>
-                                                                        <span x-text="`(${detalle.tipo_documento}) ${detalle.numero_documento}`"></span>
-                                                                    </label>
-                                                                    <label>
-                                                                        <strong>Completado:</strong>
-                                                                        <input type="checkbox" x-model="completionOrders[pedido.id][detalle.id]" autocomplete="off" @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)" :checked="detalle.completado" class="form-check-input">   
-                                                                    </label>
-                                                                </div>
-                                                            </template>
-                                                        </div>
-                                                    </template>
-                                                </div>
+                                                <template x-for="(detalle, indexDetalle) in pedido.detalles"
+                                                    :key="indexDetalle">
+                                                    <div class="pedido">
+                                                        <template x-if="detalle.tipo == 'impresion'">
+                                                            <div class="pedido-detalle"
+                                                                :class="completionOrders[pedido.id][detalle.id] ? 'completed' :
+                                                                    ''">
+                                                                <hr x-show="!!indexDetalle">
+                                                                <label>
+                                                                    <strong>Tipo de item:</strong>
+                                                                    <span>Impresión</span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Precio unitario:</strong>
+                                                                    <span x-text="detalle.precio"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Cantidad:</strong>
+                                                                    <span x-text="detalle.cantidad"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Caras:</strong>
+                                                                    <span x-text="detalle.impresion_caras"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Color:</strong>
+                                                                    <span x-text="detalle.impresion_color"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Papel:</strong>
+                                                                    <span x-text="detalle.impresion_papel"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Páginas por impresión:</strong>
+                                                                    <span x-text="detalle.impresion_paginas"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Páginas totales:</strong>
+                                                                    <span
+                                                                        x-text="detalle.impresion_paginas * detalle.cantidad"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Archivo adjunto:</strong>
+                                                                    <a :href="`/storage/uploads/${detalle.impresion_archivos?.split('/').pop()}`"
+                                                                        target="_blank" download>
+                                                                        Descargar
+                                                                    </a>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Indicaciones:</strong>
+                                                                    <span x-text="detalle.impresion_indicaciones"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Completado:</strong>
+                                                                    <input type="checkbox"
+                                                                        x-model="completionOrders[pedido.id][detalle.id]"
+                                                                        autocomplete="off"
+                                                                        @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)"
+                                                                        :checked="detalle.completado"
+                                                                        class="form-check-input">
+                                                                </label>
+                                                            </div>
+                                                        </template>
+                                                        <template x-if="detalle.tipo == 'variedad'">
+                                                            <div class="pedido-detalle"
+                                                                :class="completionOrders[pedido.id][detalle.id] ? 'completed' :
+                                                                    ''">
+                                                                <hr x-show="!!indexDetalle">
+                                                                <label>
+                                                                    <strong>Tipo de item:</strong>
+                                                                    <span>Variedad</span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Código del producto:</strong>
+                                                                    <span x-text="detalle.productoId"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Nombre:</strong>
+                                                                    <span x-text="detalle.nombre"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Precio:</strong>
+                                                                    <span x-text="detalle.precio"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Cantidad:</strong>
+                                                                    <span x-text="detalle.cantidad"></span>
+                                                                </label>
+                                                                <label>
+                                                                    <strong>Completado:</strong>
+                                                                    <input type="checkbox"
+                                                                        x-model="completionOrders[pedido.id][detalle.id]"
+                                                                        autocomplete="off"
+                                                                        @change="saveCompletion(pedido.id, detalle.id, $event.target.checked)"
+                                                                        :checked="detalle.completado"
+                                                                        class="form-check-input">
+                                                                </label>
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
                                 </template>
@@ -523,22 +610,22 @@
     </div>
     <script>
         const modalEditar = document.getElementById('editarProductoModal');
-        modalEditar.addEventListener('show.bs.modal', function (event) {
+        modalEditar.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
-    
+
             const id = button.getAttribute('data-id');
             const nombre = button.getAttribute('data-nombre');
             const precio = button.getAttribute('data-precio');
             const descripcion = button.getAttribute('data-descripcion');
             const stock = button.getAttribute('data-stock');
-    
+
             // Asignar los datos al formulario
             document.getElementById('producto_id').value = id;
             document.getElementById('editar_nombre').value = nombre;
             document.getElementById('editar_precio').value = precio;
             document.getElementById('editar_descripcion').value = descripcion;
             document.getElementById('editar_stock').value = stock;
-    
+
             // Cambiar la acción del formulario
             const form = document.getElementById('formEditarProducto');
             form.action = `/productos/${id}`;

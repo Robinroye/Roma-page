@@ -4,6 +4,7 @@
 @section('title', 'Carrito de Compras')
 
 @section('content')
+<script src="https://checkout.wompi.co/widget.js"></script>
     <div class="container-fluid">
         <div x-data="carrito" x-init="init()">
             <!-- Primera fila: Título y descripción -->
@@ -182,36 +183,27 @@
                         <div class="d-flex flex-column gap-4 my-3">
                             <label class="d-flex align-items-center gap-2 text-color"
                                 :class="{ 'shadow p-2 rounded': metodoSeleccionado === 'PSE' }">
-                                <input type="radio" name="metodoPago" value="PSE" class="form-check-input"
-                                    x-model="metodoSeleccionado">
                                 <img src="{{ asset('images/icons/pse.svg') }}" width="30" alt="PSE"> PSE
                             </label>
 
                             <label class="d-flex align-items-center gap-2 text-color"
                                 :class="{ 'shadow p-2 rounded': metodoSeleccionado === 'Bancolombia' }">
-                                <input type="radio" name="metodoPago" value="Bancolombia" class="form-check-input"
-                                    x-model="metodoSeleccionado">
                                 <img src="{{ asset('images/icons/bancolombia.svg') }}" width="30" alt="Bancolombia">
                                 Bancolombia
                             </label>
 
                             <label class="d-flex align-items-center gap-2 text-color"
                                 :class="{ 'shadow p-2 rounded': metodoSeleccionado === 'Nequi' }">
-                                <input type="radio" name="metodoPago" value="Nequi" class="form-check-input"
-                                    x-model="metodoSeleccionado">
                                 <img src="{{ asset('images/icons/nequi.svg') }}" width="30" alt="Nequi"> Nequi
                             </label>
 
                             <label class="d-flex align-items-center gap-2 text-color"
                                 :class="{ 'shadow p-2 rounded': metodoSeleccionado === 'Binance' }">
-                                <input type="radio" name="metodoPago" value="Binance" class="form-check-input"
-                                    x-model="metodoSeleccionado">
                                 <img src="{{ asset('images/icons/binance.svg') }}" width="30" alt="Binance"> Binance
                             </label>
                         </div>
                         <div class="mt-4">
-                            <input type="text" x-model="userPhone" placeholder="Tu número de celular" class="form-control mb-2">
-                            <button class="btn btn-transparent w-100" @click="enviarPedido(userPhone)">Confirmar Pedido</button>
+                            <div id="contenedor-wompi"></div>
                         </div>
                         {{-- <div class="d-flex justify-content-between mb-2">
                             <button class="btn btn-transparent" @click="confirmarPago">Confirmar y pagar</button>
