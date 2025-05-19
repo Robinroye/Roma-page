@@ -177,6 +177,9 @@ export function carrito() {
                 alert('Error inesperado al enviar el pedido.');
             });
             */
+        },
+        agregarMasProductos() {
+            window.location.href = '/';
         }
 
     };

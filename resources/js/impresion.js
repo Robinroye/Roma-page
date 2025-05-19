@@ -28,7 +28,7 @@ function impresionData() {
                 caras: '1',
                 cantidad: 0,
                 total: 0,
-                paginas: 0,
+                paginas: 1,
                 paginasAImprimir: "0-0",
                 indicaciones: '',
                 paginasTotales: 0,}  
@@ -74,7 +74,7 @@ function impresionData() {
                     {papel: 'bond',
                       color: 'bn',
                       caras: '1',
-                      cantidad: 0,
+                      cantidad: 1,
                       total: 0,
                       paginas: 0,
                       paginasAImprimir: "0-0",
