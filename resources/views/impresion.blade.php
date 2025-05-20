@@ -7,24 +7,10 @@
         <!-- Primer Row -->
         <div class="row mb-3">
             <!-- Formulario Cliente -->
-            <div class="col-md-3 mb-2">
-                <div class="card p-2 text-color">
-                    <h5>Ingresa su número de WhatsApp y dirección de envío</h5>
-                    <div class="mb-2">
-                        <img src="{{ asset('images/icons/whatsapp.svg') }}" alt="Carrito" width="20">
-                        <label class="form-label"><strong>Número de WhatsApp</strong></label>
-                        <input type="text" class="form-control" placeholder="Ingrese su número" x-model="whatsapp">
-                    </div>
-                    <div class="mb-2">
-                        <img src="{{ asset('images/icons/direccion.svg') }}" alt="Carrito" width="20">
-                        <label class="form-label"><strong>Dirección de Envío</strong></label>
-                        <input type="text" class="form-control" placeholder="Ingrese su dirección" x-model="direccion">
-                    </div>
-                </div>
-            </div>
+            
 
             <!-- Imagen de Precios -->
-            <div class="col-md-6 text-center mb-2">
+            <div class="col-md-9 text-center mb-2">
                 <img src="/images/impresiones/precios.svg" class="img-fluid" alt="Tabla de precios">
             </div>
 

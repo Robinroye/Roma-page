@@ -7,7 +7,7 @@ export function carrito() {
         totalCarrito: 0,
 
         userPhone: '',
-        
+        soloGiros: null,
         init(){
             this.carrito= JSON.parse(localStorage.getItem('carrito')) || [];
             this.updateCart();
@@ -105,6 +105,7 @@ export function carrito() {
 
             localStorage.setItem('carrito', JSON.stringify(this.carrito));
             this.generateWompi()
+            this.soloGiros= this.carrito.every(item => item.tipo === 'giro');
         },
         async generateWompi(){
             fetch('/carrito/pago', {

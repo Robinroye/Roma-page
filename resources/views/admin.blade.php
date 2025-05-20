@@ -237,8 +237,9 @@
                                             @foreach ($productos as $producto)
                                                 <tr>
                                                     <td>
-                                                        <img src="{{ asset('storage/' . json_decode($producto->imagenes)[0]) }}"
-                                                            class="img-thumbnail" width="50">
+                                                        @if(is_array($producto->imagenes) && count($producto->imagenes) > 0)
+                                                            <img src="{{ asset('storage/' . $producto->imagenes[0]) }}" class="img-thumbnail" width="50">
+                                                        @endif
                                                     </td>
                                                     <td>{{ $producto->nombre }}</td>
                                                     <td>${{ number_format($producto->precio, 0, ',', '.') }}</td>
