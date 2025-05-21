@@ -12,11 +12,13 @@
                     <div class="card-body d-flex justify-content-center align-items-center p-2">
                         <div id="carousel-{{ $producto->id }}" class="carousel slide">
                             <div class="carousel-inner">
-                                @foreach (json_decode($producto->imagenes ?? '[]') as $imagen)
-                                    <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                                        <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del producto">
-                                    </div>
-                                @endforeach
+                                @if(is_array($producto->imagenes))
+                                    @foreach ($producto->imagenes as $imagen)
+                                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                            <img src="{{ asset('storage/' . $imagen) }}" alt="Imagen del producto">
+                                        </div>
+                                    @endforeach
+                                @endif
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $producto->id }}" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -44,7 +46,7 @@
                                 id: `${Math.random().toString(36).substr(2, 9)}`,
                         nombre: '{{ $producto->nombre }}',
                         precio: '{{ $producto->precio }}',
-                        imagen: '{{ json_decode($producto->imagenes)[0] }}',
+                        imagen: '{{ count($producto->imagenes) > 0 ? $producto->imagenes[0] : '' }}',
                         cantidad: $el.parentElement.querySelector('input').value || 1
 })">
                                 <img src="{{ asset('images/icons/shopping.svg') }}" alt="Carrito" width="20">

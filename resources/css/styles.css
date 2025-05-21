@@ -8,6 +8,8 @@
     --header-footer-background: #FAFBF9; /* Fondo del header/footer */
 }
 
+[x-cloak] { display: none !important; }
+
 body {
     background-color: var(--background-color);
     color: var(--text-color);

@@ -28,7 +28,7 @@ function impresionData() {
                 caras: '1',
                 cantidad: 0,
                 total: 0,
-                paginas: 0,
+                paginas: 1,
                 paginasAImprimir: "0-0",
                 indicaciones: '',
                 paginasTotales: 0,}  
@@ -74,7 +74,7 @@ function impresionData() {
                     {papel: 'bond',
                       color: 'bn',
                       caras: '1',
-                      cantidad: 0,
+                      cantidad: 1,
                       total: 0,
                       paginas: 0,
                       paginasAImprimir: "0-0",
@@ -91,7 +91,7 @@ function impresionData() {
                             this.settings[index].paginasTotales= 1;
                             this.vistasPrevias.push({type:"img", src: e.target.result});
                             this.indice= this.vistasPrevias.length - 1;
-                        
+                            this.calcularTotal(); 
                     };
                     reader.readAsDataURL(archivo);
                 } else if (archivo.type === "application/pdf") {
@@ -129,6 +129,7 @@ function impresionData() {
                 this.settings[index].paginasAImprimir = `1-${pdf.numPages}`;
                 this.settings[index].paginasTotales= pdf.numPages;
                 this.indice= this.vistasPrevias.length - 1;
+                this.calcularTotal();
             };
             reader.readAsArrayBuffer(file);
 
@@ -163,6 +164,8 @@ function impresionData() {
                     this.settings[index].paginasAImprimir = `1-${pageCount}`;
                     this.settings[index].paginasTotales= pageCount;
                     this.indice= this.vistasPrevias.length - 1;
+                    this.calcularTotal(); 
+
                 });
         
                 // Remove hidden container

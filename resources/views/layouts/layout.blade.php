@@ -18,7 +18,7 @@
     @stack('styles')
 </head>
 
-<body class="d-flex flex-column vh-100" x-data="carritoGlobal">
+<body class="d-flex flex-column vh-100" x-data="carritoGlobal" x-cloak>
     <!-- Header -->
     @include('partials.header')
     <!-- Main Content -->

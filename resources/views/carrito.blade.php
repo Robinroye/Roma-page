@@ -30,7 +30,7 @@
                             <div x-data="{ editing: true }">
                                 <template x-if="producto.tipo === 'variedad'">
                                     <div class="d-flex align-items-center border-bottom py-3" x-data="{ cantidadVariedad: producto.cantidad }">
-                                        <img :src="producto.imagen" class="img-thumbnail me-3"
+                                        <img :src="`/storage/${producto.imagen}`" class="img-thumbnail me-3"
                                             style="width: 80px; height: 80px; object-fit: cover;">
                                         <div class="flex-grow-1">
                                             <h6 class="mb-1">
@@ -53,7 +53,7 @@
                                 <template x-if="producto.tipo === 'impresion'">
                                     <div class="d-flex flex-column border-bottom py-3" x-data="{ cantidadImpresion: producto.cantidad }">
                                         <div class="d-flex align-items-center">
-                                            <img class="img-thumbnail me-3"
+                                            <img src="/images/carrito/impresion.png" class="img-thumbnail me-3"
                                                 style="width: 80px; height: 80px; object-fit: cover;">
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">
@@ -107,7 +107,7 @@
                                         <div class="d-flex align-items-center" x-init="bss = producto.monto_bss;
                                         dolares = producto.monto_dolares;
                                         cop = producto.monto_cop">
-                                            <img :src="producto.imagen" class="img-thumbnail me-3"
+                                            <img src="/images/carrito/giro.png" class="img-thumbnail me-3"
                                                 style="width: 80px; height: 80px; object-fit: cover;">
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-1">Giro</h6>
@@ -202,6 +202,25 @@
                                 <img src="{{ asset('images/icons/binance.svg') }}" width="30" alt="Binance"> Binance
                             </label>
                         </div>
+                        <div class=" mb-2">
+                            <template x-if="soloGiros !== null">
+
+                            <div class="card p-2 text-color">
+                                <h5>Ingrese su número de WhatsApp<span x-show="!soloGiros"> y dirección de envío</span></h5>
+                                <div class="mb-2">
+                                    <img src="{{ asset('images/icons/whatsapp.svg') }}" alt="Carrito" width="20">
+                                    <label class="form-label"><strong>Número de WhatsApp</strong></label>
+                                    <input type="text" class="form-control" placeholder="Ingrese su número" x-model="whatsapp">
+                                </div>
+                                <div class="mb-2" x-show="!soloGiros">
+                                    <img src="{{ asset('images/icons/direccion.svg') }}" alt="Carrito" width="20">
+                                    <label class="form-label"><strong>Dirección de Envío</strong></label>
+                                    <input type="text" class="form-control" placeholder="Ingrese su dirección" x-model="direccion">
+                                </div>
+                            </div>
+                            </template>
+
+                    </div>
                         <div class="mt-4">
                             <div id="contenedor-wompi"></div>
                         </div>

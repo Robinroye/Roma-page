@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nombre'); // Este campo debe existir
             $table->decimal('precio', 10, 2);
             $table->text('descripcion')->nullable();
-            $table->string('imagenes')->nullable();
+            $table->json('imagenes')->nullable();
             $table->integer('stock');
             $table->timestamps();
         });

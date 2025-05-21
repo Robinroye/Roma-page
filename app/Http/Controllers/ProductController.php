@@ -33,7 +33,7 @@ class ProductController extends Controller
             'nombre' => $request->nombre,
             'precio' => $request->precio,
             'descripcion' => $request->descripcion,
-            'imagenes' => json_encode($imagenesPaths), // Guardamos en formato JSON
+            'imagenes' => $imagenesPaths, // Guardamos como array, Eloquent lo convierte a JSON
             'stock' => $request->stock,
         ]);
 
@@ -63,7 +63,7 @@ class ProductController extends Controller
                 $path = $imagen->store('images', 'public');
                 $imagenesPaths[] = $path;
             }
-            $producto->imagenes = json_encode($imagenesPaths);
+            $producto->imagenes = $imagenesPaths; // Guardamos como array
         }
 
         $producto->save();
@@ -76,7 +76,7 @@ class ProductController extends Controller
 
     // Elimina imágenes del storage (opcional pero recomendado)
     if ($producto->imagenes) {
-        foreach (json_decode($producto->imagenes) as $imagen) {
+        foreach ((array)$producto->imagenes as $imagen) { // $producto->imagenes ya es array
             \Storage::disk('public')->delete($imagen);
         }
     }
