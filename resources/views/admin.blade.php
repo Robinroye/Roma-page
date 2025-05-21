@@ -167,7 +167,7 @@
                     <div class="row">
                         <!-- Formulario de Agregar Producto -->
                         <div class="col-md-5">
-                            <div class="card p-4 shadow">
+                            <div class="card mb-1 p-4 shadow">
                                 <h5 class="text-center">Agregar Producto</h5>
                                 <form action="{{ route('admin.store') }}" method="POST" enctype="multipart/form-data"
                                     x-data="{ preview: [] }">
@@ -220,7 +220,7 @@
 
                         <!-- Listado de productos -->
                         <div class="col-md-7">
-                            <div class="card p-4 shadow">
+                            <div class="card mb-1 p-4 shadow">
                                 <h5 class="text-center">Lista de Productos</h5>
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -245,6 +245,7 @@
                                                     <td>${{ number_format($producto->precio, 0, ',', '.') }}</td>
                                                     <td>{{ $producto->stock }}</td>
                                                     <td>
+                                                        <div class="d-flex gap-1">
                                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                             data-bs-target="#editarProductoModal"
                                                             data-id="{{ $producto->id }}"
@@ -262,6 +263,7 @@
                                                             <button class="btn btn-danger btn-sm"
                                                                 onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?')">Eliminar</button>
                                                         </form>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -284,7 +286,7 @@
                     <div class="row">
                         <!-- Formulario de Agregar Producto -->
                         <div class="col-md-5">
-                            <div class="card p-4 shadow">
+                            <div class="card mb-1 p-4 shadow">
                                 <h5 class="text-center">Agregar tipo de impresion</h5>
                                 <form action="{{ route('admin.storeTipoImpresion') }}" method="POST"
                                     enctype="multipart/form-data" x-data="{ preview: [] }">
@@ -324,7 +326,7 @@
 
                         <!-- Listado de tipos de Impresion -->
                         <div class="col-md-7">
-                            <div class="card p-4 shadow">
+                            <div class="card mb-1 p-4 shadow">
                                 <h5 class="text-center">Lista de Tipos de Impresion</h5>
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -343,6 +345,8 @@
                                                     <td>{{ $tipoDeImpresion->color }}</td>
                                                     <td>${{ number_format($tipoDeImpresion->precio, 0, ',', '.') }}</td>
                                                     <td>
+                                                        <div class="d-flex gap-1">
+
                                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                                             data-bs-target="#editTipoImpresionModal"
                                                             onclick="populateEditModal({{ $tipoDeImpresion }})">Editar</button>
@@ -353,6 +357,8 @@
                                                             @method('DELETE')
                                                             <button class="btn btn-danger btn-sm">Eliminar</button>
                                                         </form>
+                                                        </div>
+
                                                     </td>
                                                 </tr>
                                             @endforeach
